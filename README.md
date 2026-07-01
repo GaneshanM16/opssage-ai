@@ -278,6 +278,8 @@ This project intentionally includes a [TRAINING_GUIDE.md](TRAINING_GUIDE.md)
 for beginners. It explains each module, the algorithmic idea behind it, and the
 takeaway from building it.
 
+For interview preparation, see [docs/interview-notes.md](docs/interview-notes.md).
+
 ## Roadmap
 
 - Add a Python 3.11/3.12 virtual environment guide
@@ -288,4 +290,3 @@ takeaway from building it.
 - Add severity/category classifier
 - Add Docker setup
 - Add CI workflow for retrieval evaluation
-
