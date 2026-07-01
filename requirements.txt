@@ -1,0 +1,7 @@
+# Beginner-friendly install for the RAG engine.
+#
+# This file avoids FastAPI/Pydantic so you can first get embeddings and vector
+# search working. Install API dependencies later with requirements-api.txt.
+sentence-transformers
+faiss-cpu==1.13.2
+requests
