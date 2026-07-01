@@ -85,6 +85,17 @@ curl -X POST http://127.0.0.1:8000/analyze-incident ^
   -d "{\"incident\":\"ORA-01652 unable to extend temp segment in tablespace TEMP\"}"
 ```
 
+## Evaluate Retrieval
+
+Run the retrieval evaluation script:
+
+```bash
+python scripts/evaluate_retrieval.py
+```
+
+This checks whether OpsSage retrieves the expected top runbook for sample
+incidents and prints top-1 retrieval accuracy.
+
 ## Why RAG First
 
 RAG is the right first version because operational knowledge changes often.

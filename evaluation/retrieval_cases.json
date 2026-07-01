@@ -1,0 +1,34 @@
+[
+  {
+    "incident": "ORA-01652 unable to extend temp segment in tablespace TEMP",
+    "accepted_top_documents": [
+      "Oracle TEMP Tablespace Exhaustion",
+      "Incident 001 - TEMP Tablespace Failure"
+    ]
+  },
+  {
+    "incident": "Linux server disk usage reached 98 percent and application cannot write logs",
+    "accepted_top_documents": [
+      "Linux Disk Full"
+    ]
+  },
+  {
+    "incident": "Oracle EBS login is very slow for all users",
+    "accepted_top_documents": [
+      "Oracle EBS Login Slow",
+      "Incident 002 - Application Login Latency"
+    ]
+  },
+  {
+    "incident": "Application returns HTTP 500 after the latest deployment",
+    "accepted_top_documents": [
+      "API HTTP 500 Error"
+    ]
+  },
+  {
+    "incident": "Application cannot connect to database and connection timeout error is showing",
+    "accepted_top_documents": [
+      "Database Connection Failure"
+    ]
+  }
+]

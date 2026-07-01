@@ -16,8 +16,7 @@ class IncidentAnalyzer:
         self.vector_store = VectorStore(self.documents, document_vectors)
 
     def analyze(self, incident: str) -> IncidentAnalysis:
-        query_vector = self.embedding_model.encode([incident])[0]
-        results = self.vector_store.search(query_vector, TOP_K_DOCUMENTS)
+        results = self.retrieve(incident)
         analysis = generate_analysis(incident, results)
 
         return IncidentAnalysis(
@@ -44,6 +43,10 @@ class IncidentAnalyzer:
                 for result in results
             ],
         )
+
+    def retrieve(self, incident: str):
+        query_vector = self.embedding_model.encode([incident])[0]
+        return self.vector_store.search(query_vector, TOP_K_DOCUMENTS)
 
 
 def _as_text(value) -> str:

@@ -188,6 +188,39 @@ Takeaway:
 
 You learn backend API design for AI applications.
 
+## Module 8: Evaluation
+
+Files:
+
+```txt
+evaluation/retrieval_cases.json
+scripts/evaluate_retrieval.py
+```
+
+What evaluation does:
+
+```txt
+Checks whether the system retrieves the expected runbook for known incidents.
+```
+
+Metric:
+
+```txt
+Top-1 retrieval accuracy
+```
+
+Child-level explanation:
+
+```txt
+We give the app a quiz. For each problem, we already know the correct notebook
+page or a correct past incident. If the app picks one of those first, it gets
+one point.
+```
+
+Takeaway:
+
+You learn how to test an AI system instead of trusting one good demo.
+
 ## Hugging Face Dataset Plan
 
 Use Hugging Face later for sample logs, not for training at first.
@@ -231,4 +264,3 @@ Possible future fine-tuning tasks:
 - severity classification
 - incident category classification
 - incident report writing style
-
