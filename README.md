@@ -119,6 +119,16 @@ python scripts/evaluate_retrieval.py
 This checks whether OpsSage retrieves the expected top runbook for sample
 incidents and prints top-1 retrieval accuracy.
 
+## Examples
+
+Sample requests and responses are available in:
+
+```txt
+examples/
+```
+
+Use these files to quickly explain the project in interviews or on GitHub.
+
 ## Why RAG First
 
 RAG is the right first version because operational knowledge changes often.

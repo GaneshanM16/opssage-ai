@@ -1,0 +1,30 @@
+{
+  "summary": "TEMP tablespace exhaustion pattern detected",
+  "severity": "High",
+  "retrieval_confidence": "High",
+  "grounding_note": "Grounded on 'Oracle TEMP Tablespace Exhaustion'. Validate the checks before confirming the root cause.",
+  "probable_causes": [
+    "TEMP tablespace is full",
+    "Long-running SQL query is consuming temporary space",
+    "Batch process started a large sort operation"
+  ],
+  "checks": [
+    "Check TEMP tablespace usage",
+    "Identify sessions consuming temporary space",
+    "Review recently started batch jobs",
+    "Find SQL statements with large sort operations"
+  ],
+  "fix_steps": [
+    "Confirm the offending session or SQL",
+    "Add a tempfile only after approval",
+    "Tune the SQL query if the same issue repeats",
+    "Stop a runaway session only after business validation"
+  ],
+  "incident_report": "The incident matches an Oracle TEMP tablespace exhaustion pattern. Possible causes include full TEMP tablespace, a large sort operation, or a long-running SQL query. The root cause should be confirmed through TEMP usage and session checks.",
+  "retrieved_documents": [
+    {
+      "title": "Oracle TEMP Tablespace Exhaustion",
+      "score": 0.59
+    }
+  ]
+}

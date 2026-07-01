@@ -1,0 +1,31 @@
+{
+  "summary": "Application cannot connect to database with connection timeout error",
+  "severity": "High",
+  "retrieval_confidence": "Medium",
+  "grounding_note": "Grounded on 'Database Connection Failure' with medium retrieval confidence. Validate the checks before confirming the root cause.",
+  "probable_causes": [
+    "Database listener is down",
+    "Wrong database credentials",
+    "Network issue between app and database",
+    "Connection pool is exhausted"
+  ],
+  "checks": [
+    "Check database listener status",
+    "Verify database host and port",
+    "Check application connection pool",
+    "Review database alert logs"
+  ],
+  "fix_steps": [
+    "Restart listener after approval",
+    "Correct connection string if misconfigured",
+    "Scale or reset connection pool if exhausted",
+    "Escalate to DBA team if database is unavailable"
+  ],
+  "incident_report": "The incident matches the Database Connection Failure runbook. Possible causes include database listener outage, credential issue, network issue, or connection pool exhaustion. The root cause is not confirmed yet; complete the recommended checks before applying fix steps.",
+  "retrieved_documents": [
+    {
+      "title": "Database Connection Failure",
+      "score": 0.71
+    }
+  ]
+}
