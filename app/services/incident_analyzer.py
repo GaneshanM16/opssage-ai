@@ -23,10 +23,17 @@ class IncidentAnalyzer:
         return IncidentAnalysis(
             summary=_as_text(analysis.get("summary", "")),
             severity=_as_text(analysis.get("severity", "Unknown")),
+            retrieval_confidence=_retrieval_confidence(results),
+            grounding_note=_grounding_note(results),
             probable_causes=_as_list(analysis.get("probable_causes", [])),
             checks=_as_list(analysis.get("checks", [])),
             fix_steps=_as_list(analysis.get("fix_steps", [])),
-            incident_report=_as_text(analysis.get("incident_report", "")),
+            incident_report=_incident_report(
+                incident=incident,
+                report=_as_text(analysis.get("incident_report", "")),
+                results=results,
+                probable_causes=_as_list(analysis.get("probable_causes", [])),
+            ),
             retrieved_documents=[
                 RetrievedDocument(
                     title=result.document.title,
@@ -55,3 +62,50 @@ def _as_list(value) -> list[str]:
     if isinstance(value, str):
         return [value]
     return [_as_text(value)]
+
+
+def _retrieval_confidence(results) -> str:
+    if not results:
+        return "Low"
+
+    top_score = results[0].score
+    if top_score >= 0.65:
+        return "High"
+    if top_score >= 0.40:
+        return "Medium"
+    return "Low"
+
+
+def _grounding_note(results) -> str:
+    if not results:
+        return "No matching runbook was found. Treat the answer as general guidance."
+
+    top = results[0]
+    confidence = _retrieval_confidence(results).lower()
+    return (
+        f"Grounded on '{top.document.title}' with {confidence} retrieval confidence. "
+        "Validate the checks before confirming the root cause."
+    )
+
+
+def _incident_report(
+    incident: str,
+    report: str,
+    results,
+    probable_causes: list[str],
+) -> str:
+    if len(report.strip()) >= 80:
+        return report
+
+    if not results:
+        return (
+            f"Incident '{incident}' needs manual investigation because no close "
+            "runbook match was found."
+        )
+
+    causes = ", ".join(probable_causes[:3]) if probable_causes else "multiple causes"
+    return (
+        f"The incident '{incident}' matches the '{results[0].document.title}' runbook. "
+        f"Possible causes include {causes}. The root cause is not confirmed yet; "
+        "complete the recommended checks before applying fix steps."
+    )

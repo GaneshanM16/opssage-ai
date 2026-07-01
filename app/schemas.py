@@ -23,6 +23,8 @@ if BaseModel is not None:
     class IncidentAnalysis(BaseModel):
         summary: str
         severity: str
+        retrieval_confidence: str
+        grounding_note: str
         probable_causes: List[str]
         checks: List[str]
         fix_steps: List[str]
@@ -50,6 +52,8 @@ else:
     class IncidentAnalysis:
         summary: str
         severity: str
+        retrieval_confidence: str
+        grounding_note: str
         probable_causes: List[str]
         checks: List[str]
         fix_steps: List[str]

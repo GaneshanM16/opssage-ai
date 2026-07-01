@@ -53,6 +53,8 @@ Rules:
 - severity must be a string.
 - probable_causes, checks, and fix_steps must be arrays of strings.
 - incident_report must be one short string, not an object.
+- Use cautious words like possible, likely, may, and requires validation.
+- Do not claim a root cause is confirmed unless the incident explicitly proves it.
 - Do not add extra keys.
 
 Incident:
@@ -86,6 +88,6 @@ def _fallback_analysis(incident: str, results: List[SearchResult]) -> dict:
         ],
         "incident_report": (
             f"Incident analyzed: {incident}. Closest knowledge source: {title}. "
-            "Final action requires engineer validation."
+            "Possible causes should be validated through the recommended checks."
         ),
     }
