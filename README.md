@@ -45,6 +45,29 @@ Run it from this folder:
 cd opssage-ai
 ```
 
+## Run A Local API Without FastAPI
+
+If your Python version cannot install FastAPI/Pydantic yet, run the plain-Python
+API:
+
+```bash
+python -m app.simple_api
+```
+
+Health check:
+
+```bash
+curl http://127.0.0.1:8000/health
+```
+
+Analyze an incident:
+
+```bash
+curl -X POST http://127.0.0.1:8000/analyze-incident ^
+  -H "Content-Type: application/json" ^
+  -d "{\"incident\":\"Application cannot connect to database and connection timeout error is showing\"}"
+```
+
 ## Portfolio Mode
 
 Install the RAG dependencies first:

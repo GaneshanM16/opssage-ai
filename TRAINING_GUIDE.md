@@ -188,6 +188,15 @@ Takeaway:
 
 You learn backend API design for AI applications.
 
+Beginner fallback:
+
+```txt
+app/simple_api.py
+```
+
+This uses Python's built-in HTTP server. It is not as professional as FastAPI,
+but it teaches the same API idea while avoiding Python package issues.
+
 ## Module 8: Evaluation
 
 Files:
