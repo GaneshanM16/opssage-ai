@@ -59,9 +59,10 @@ class OpsSageRequestHandler(BaseHTTPRequestHandler):
 def main() -> None:
     host = "127.0.0.1"
     port = 8000
+    print("Loading OpsSage analyzer...", flush=True)
     server = HTTPServer((host, port), OpsSageRequestHandler)
-    print(f"OpsSage simple API running at http://{host}:{port}")
-    print("Try GET /health or POST /analyze-incident")
+    print(f"OpsSage simple API running at http://{host}:{port}", flush=True)
+    print("Try GET /health or POST /analyze-incident", flush=True)
     server.serve_forever()
 
 
