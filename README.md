@@ -1,139 +1,291 @@
 # OpsSage AI
 
-OpsSage AI is a beginner-friendly RAG project for incident analysis.
+OpsSage AI is a RAG-based incident analysis assistant for production support
+and infrastructure troubleshooting. It accepts an incident, log snippet, or
+error message, retrieves relevant runbooks or past incidents, and returns a
+structured troubleshooting response with probable causes, validation checks,
+fix steps, retrieval confidence, and a grounded incident report.
 
-The app accepts a production incident, log, or error message, retrieves relevant
-runbooks, and generates a structured troubleshooting response.
+## Why This Project Exists
 
-## What You Are Building
+Production support teams often solve repeat issues by searching old runbooks,
+incident notes, and error references. OpsSage AI turns that workflow into a
+small AI system:
 
 ```txt
-Incident text
--> embedding model
--> vector search
--> relevant runbooks
--> LLM prompt
--> structured incident analysis
+Search the right operational knowledge first.
+Then use an LLM to generate a structured response.
 ```
 
-## Beginner Explanation
+This keeps the system easier to update than fine-tuning because new knowledge
+can be added by editing Markdown runbooks.
 
-Imagine OpsSage AI has a notebook of old problems and fixes. When a new issue
-comes in, it finds the most similar notes, reads them, and explains what to do.
+## Features
 
-## First Learning Modules
+- RAG pipeline for incident analysis
+- Hugging Face sentence-transformer embeddings when available
+- FAISS vector search when available
+- fallback local embedding/search mode for beginner-friendly execution
+- Ollama/Llama-compatible generation layer
+- grounded reporting to avoid overconfident root-cause claims
+- retrieval confidence and source document previews
+- plain-Python local API for Python 3.14 compatibility
+- FastAPI entry point for portfolio/API mode
+- retrieval evaluation script with sample test cases
+- example request/response files for GitHub review
 
-1. `data/runbooks/` stores troubleshooting knowledge.
-2. `app/services/document_loader.py` reads those files.
-3. `app/services/embedding.py` turns text into vectors.
-4. `app/services/vector_store.py` searches for similar documents.
-5. `app/services/llm.py` asks Ollama to generate the final answer.
-6. `app/services/incident_analyzer.py` connects the whole flow.
-7. `app/main.py` exposes the FastAPI endpoint.
+## Architecture
 
-## Quick Demo Without Installing Anything
-
-This uses the fallback local search and rule-based answer generator:
-
-```bash
-python -m app.demo "ORA-01652 unable to extend temp segment in tablespace TEMP"
+```txt
+User incident/log
+      |
+      v
+IncidentAnalyzer
+      |
+      v
+Embedding model
+Hugging Face sentence-transformer or fallback hashing
+      |
+      v
+Vector search
+FAISS or fallback cosine similarity
+      |
+      v
+Top matching runbooks/incidents
+      |
+      v
+Prompt + local LLM
+Ollama / Llama 3.2 when available
+      |
+      v
+Structured incident analysis
 ```
 
-Run it from this folder:
+## Tech Stack
+
+| Layer | Tools |
+| --- | --- |
+| Language | Python |
+| API | Plain Python HTTP server, FastAPI optional |
+| Embeddings | `sentence-transformers/all-MiniLM-L6-v2` |
+| Vector Search | FAISS, fallback cosine similarity |
+| LLM | Ollama + Llama 3.2 compatible |
+| Data Format | Markdown runbooks, JSON evaluation cases |
+| Evaluation | Top-1 retrieval accuracy |
+
+## Project Structure
+
+```txt
+opssage-ai/
+  app/
+    demo.py
+    simple_api.py
+    main.py
+    schemas.py
+    services/
+      document_loader.py
+      embedding.py
+      vector_store.py
+      llm.py
+      incident_analyzer.py
+  data/
+    runbooks/
+    incidents/
+  evaluation/
+    retrieval_cases.json
+  examples/
+    *_request.json
+    *_response.json
+  scripts/
+    build_index.py
+    evaluate_retrieval.py
+```
+
+## Quick Start
+
+Run from the project folder:
 
 ```bash
 cd opssage-ai
 ```
 
-## Run A Local API Without FastAPI
+Run a single incident analysis:
 
-If your Python version cannot install FastAPI/Pydantic yet, run the plain-Python
-API:
+```bash
+python -m app.demo "ORA-01652 unable to extend temp segment in tablespace TEMP"
+```
+
+This works even without the full API stack because the project includes fallback
+embedding and search behavior.
+
+## Run The Local API
+
+Use this option if FastAPI/Pydantic is not working on a newer Python version:
 
 ```bash
 python -m app.simple_api
 ```
 
-Health check:
+Expected startup output:
 
-```bash
+```txt
+Loading OpsSage analyzer...
+OpsSage simple API running at http://127.0.0.1:8000
+Try GET /health or POST /analyze-incident
+```
+
+In a second terminal, test the API:
+
+```powershell
 curl http://127.0.0.1:8000/health
 ```
 
-Analyze an incident:
+PowerShell request example:
 
-```bash
-curl -X POST http://127.0.0.1:8000/analyze-incident ^
-  -H "Content-Type: application/json" ^
-  -d "{\"incident\":\"Application cannot connect to database and connection timeout error is showing\"}"
+```powershell
+$body = @{ incident = 'Application cannot connect to database and connection timeout error is showing' } | ConvertTo-Json
+Invoke-RestMethod -Uri 'http://127.0.0.1:8000/analyze-incident' -Method Post -ContentType 'application/json' -Body $body
 ```
 
 ## Portfolio Mode
 
-Install the RAG dependencies first:
+Install RAG dependencies:
 
 ```bash
 pip install -r requirements.txt
 ```
 
-Install the API dependencies after the RAG install works:
+Install API dependencies:
 
 ```bash
 pip install -r requirements-api.txt
 ```
 
-Or install everything at once:
+Or install everything:
 
 ```bash
 pip install -r requirements-full.txt
 ```
 
-Start Ollama in another terminal and pull a model:
+Start Ollama and pull a local model:
 
 ```bash
 ollama pull llama3.2
 ```
 
-Start the API:
+Run the FastAPI app:
 
 ```bash
 uvicorn app.main:app --reload
 ```
 
-Test:
+Open:
 
-```bash
-curl -X POST http://127.0.0.1:8000/analyze-incident ^
-  -H "Content-Type: application/json" ^
-  -d "{\"incident\":\"ORA-01652 unable to extend temp segment in tablespace TEMP\"}"
+```txt
+http://127.0.0.1:8000/docs
 ```
 
-## Evaluate Retrieval
+Note: if you are on Python 3.14 and Pydantic/FastAPI packages fail to install,
+use `app.simple_api` or create a Python 3.11/3.12 environment for API mode.
 
-Run the retrieval evaluation script:
+## Example Output
 
-```bash
-python scripts/evaluate_retrieval.py
+Input:
+
+```json
+{
+  "incident": "Application cannot connect to database and connection timeout error is showing"
+}
 ```
 
-This checks whether OpsSage retrieves the expected top runbook for sample
-incidents and prints top-1 retrieval accuracy.
+Output shape:
 
-## Examples
+```json
+{
+  "summary": "Application cannot connect to database with connection timeout error",
+  "severity": "High",
+  "retrieval_confidence": "Medium",
+  "grounding_note": "Grounded on 'Database Connection Failure' with medium retrieval confidence. Validate the checks before confirming the root cause.",
+  "probable_causes": [
+    "Database listener is down",
+    "Wrong database credentials",
+    "Network issue between app and database",
+    "Connection pool is exhausted"
+  ],
+  "checks": [
+    "Check database listener status",
+    "Verify database host and port",
+    "Check application connection pool",
+    "Review database alert logs"
+  ],
+  "fix_steps": [
+    "Restart listener after approval",
+    "Correct connection string if misconfigured",
+    "Scale or reset connection pool if exhausted",
+    "Escalate to DBA team if database is unavailable"
+  ]
+}
+```
 
-Sample requests and responses are available in:
+More examples are available in:
 
 ```txt
 examples/
 ```
 
-Use these files to quickly explain the project in interviews or on GitHub.
+## Evaluate Retrieval
 
-## Why RAG First
+Run:
 
-RAG is the right first version because operational knowledge changes often.
-Instead of fine-tuning a model every time a runbook changes, we update the
-documents and rebuild/search the knowledge base.
+```bash
+python scripts/evaluate_retrieval.py
+```
 
-Future versions can add fine-tuning for severity classification or incident
-category prediction.
+Current sample result:
+
+```txt
+Passed: 5/5
+Top-1 retrieval accuracy: 100%
+```
+
+The evaluation checks whether OpsSage retrieves the expected runbook or matching
+past incident for known incident inputs.
+
+## How RAG Works Here
+
+1. Markdown runbooks and incident notes are loaded from `data/`.
+2. Each document is converted into an embedding.
+3. The user incident is converted into an embedding.
+4. Vector search retrieves the closest documents.
+5. Retrieved context is passed to the LLM prompt.
+6. The response is normalized into a stable JSON-like schema.
+7. Grounding fields explain which document supported the answer.
+
+## Why RAG Instead Of Fine-Tuning First
+
+Operational knowledge changes often. With RAG, new knowledge can be added by
+updating a runbook file instead of retraining a model.
+
+Fine-tuning can be added later for narrower tasks such as:
+
+- severity classification
+- incident category prediction
+- incident report writing style
+
+## Learning Notes
+
+This project intentionally includes a [TRAINING_GUIDE.md](TRAINING_GUIDE.md)
+for beginners. It explains each module, the algorithmic idea behind it, and the
+takeaway from building it.
+
+## Roadmap
+
+- Add a Python 3.11/3.12 virtual environment guide
+- Add a small frontend after backend behavior is stable
+- Add source citations per generated fix step
+- Add persistent FAISS index storage
+- Add Hugging Face log dataset ingestion
+- Add severity/category classifier
+- Add Docker setup
+- Add CI workflow for retrieval evaluation
+
